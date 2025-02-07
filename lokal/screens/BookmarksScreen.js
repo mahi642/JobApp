@@ -1,10 +1,27 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import { getBookmarkedJobs } from "../utils/storage";
 
 export default function BookmarksScreen() {
+  const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+
+  useEffect(() => {
+    const storedJobs = getBookmarkedJobs();
+    setBookmarkedJobs(storedJobs);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Bookmarks</Text>
+      <Text style={styles.title}>Bookmarked Jobs</Text>
+      {bookmarkedJobs.length === 0 ? (
+        <Text>No bookmarks yet.</Text>
+      ) : (
+        <FlatList
+          data={bookmarkedJobs}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => <Text style={styles.job}>{item}</Text>}
+        />
+      )}
     </View>
   );
 }
@@ -12,11 +29,15 @@ export default function BookmarksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 20,
   },
-  text: {
-    fontSize: 20,
+  title: {
+    fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 10,
+  },
+  job: {
+    fontSize: 16,
+    paddingVertical: 5,
   },
 });

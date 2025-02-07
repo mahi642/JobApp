@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList, ActivityIndicator, StyleSheet } from "react-native";
 import JobCard from "../components/JobCard";
+import { saveJobId, getJobId, removeJobId } from "../utils/storage";
 
 export default function JobsScreen() {
   const [jobData, setJobData] = useState([]);

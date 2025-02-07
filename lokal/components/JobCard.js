@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons"; // Icons for UI elements
+import { Ionicons } from "@expo/vector-icons";
+import {
+  saveJobToBookmarks,
+  removeJobFromBookmarks,
+  isJobBookmarked,
+} from "../utils/storage";
 
 const colors = [
   "#E3F2FD",
@@ -10,11 +15,29 @@ const colors = [
   "#F3E5F5",
   "#E1F5FE",
   "#FBE9E7",
-]; // Light background colors
+];
 
 export default function JobCard({ job, index }) {
   const navigation = useNavigation();
-  const backgroundColor = colors[index % colors.length]; // Alternating background colors
+  const backgroundColor = colors[index % colors.length];
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    const checkBookmark = async () => {
+      const isBookmarked = await isJobBookmarked(job.id);
+      setBookmarked(isBookmarked);
+    };
+    checkBookmark();
+  }, []);
+
+  const toggleBookmark = async () => {
+    if (bookmarked) {
+      await removeJobFromBookmarks(job.id);
+    } else {
+      await saveJobToBookmarks(job);
+    }
+    setBookmarked(!bookmarked);
+  };
 
   return (
     <TouchableOpacity
@@ -22,17 +45,19 @@ export default function JobCard({ job, index }) {
     >
       <View style={{ padding: 5 }}>
         <View style={[styles.card, { backgroundColor }]}>
-          {/* Job Details Section */}
           <View style={styles.detailsContainer}>
             <View style={styles.top}>
               <View style={styles.row}>
                 <Ionicons name="business-outline" size={20} color="#007AFF" />
                 <Text style={styles.companyName}>{job.company_name}</Text>
               </View>
-              <TouchableOpacity style={styles.bookmarkContainer}>
+              <TouchableOpacity
+                style={styles.bookmarkContainer}
+                onPress={toggleBookmark}
+              >
                 <Ionicons
                   style={styles.icon}
-                  name="bookmark-outline"
+                  name={bookmarked ? "bookmark" : "bookmark-outline"}
                   size={35}
                   color="#007AFF"
                 />
@@ -67,8 +92,6 @@ export default function JobCard({ job, index }) {
               </Text>
             </View>
           </View>
-
-          {/* Bookmark Icon */}
         </View>
       </View>
     </TouchableOpacity>
@@ -76,11 +99,11 @@ export default function JobCard({ job, index }) {
 }
 
 const styles = StyleSheet.create({
-  top:{
-    flexDirection:"row"
+  top: {
+    flexDirection: "row",
   },
   card: {
-    flexDirection: "row", // Job details and bookmark side by side
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
@@ -91,14 +114,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 3,
-    minHeight: 230, // Uniform height for all cards
+    minHeight: 230,
   },
   detailsContainer: {
     flex: 9,
     padding: 4,
   },
   bookmarkContainer: {
-    flex: 1, // Takes 10% of the width
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -106,13 +129,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    flex:9,
+    flex: 9,
   },
   companyName: {
     fontSize: 19,
     fontWeight: "bold",
     color: "#007AFF",
-    marginLeft: 8, // Spacing after icon
+    marginLeft: 8,
   },
   title: {
     fontSize: 15,

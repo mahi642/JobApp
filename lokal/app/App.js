@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useEffect} from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -6,6 +6,7 @@ import JobsScreen from "../screens/JobsScreen";
 import JobDetailsScreen from "../screens/JobDetailsScreen";
 import BookmarksScreen from "../screens/BookmarksScreen";
 import { Ionicons } from "@expo/vector-icons"; // For icons
+import { setupDatabase } from "../utils/storage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -26,6 +27,8 @@ function JobsStack() {
 
 // Main App Navigation
 export default function App() {
+
+
   return (
     <NavigationContainer>
       <Tab.Navigator

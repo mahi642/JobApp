@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginBottom: 15,
+    resizeMode:"stretch"
   },
   imagePlaceholder: {
     width: "100%",
