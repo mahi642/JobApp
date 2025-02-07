@@ -1,30 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { getBookmarkedJobs } from "../utils/storage";
+import JobCard from "../components/JobCard"; // Make sure to import JobCard
 
-export default function BookmarksScreen() {
+export default function BookmarksScreen({ navigation }) {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+  const [allJobs, setAllJobs] = useState([]); // Add state for all jobs
+  const isFocused = useIsFocused();
 
+  // Load all jobs and bookmarks
   useEffect(() => {
-    const storedJobs = getBookmarkedJobs();
-    setBookmarkedJobs(storedJobs);
-  }, []);
+    if (isFocused) {
+      // You'll need to implement this function to get all jobs from your API/state
+      const loadJobs = async () => {
+        const response = await fetch(
+          "https://testapi.getlokalapp.com/common/jobs"
+        );
+        const data = await response.json();
+        setAllJobs(data.results);
+      };
+
+      loadJobs();
+      setBookmarkedJobs(getBookmarkedJobs());
+    }
+  }, [isFocused]);
+
+  // Filter jobs that are bookmarked
+  const filteredJobs = allJobs.filter((job) => bookmarkedJobs.includes(job.id));
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bookmarked Jobs</Text>
-      {bookmarkedJobs.length === 0 ? (
+      {filteredJobs.length === 0 ? (
         <Text>No bookmarks yet.</Text>
       ) : (
         <FlatList
-          data={bookmarkedJobs}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({ item }) => <Text style={styles.job}>{item}</Text>}
+          data={filteredJobs}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <JobCard
+              job={item}
+              index={filteredJobs.indexOf(item)}
+              navigation={navigation}
+            />
+          )}
         />
       )}
     </View>
   );
 }
+
+// Keep styles the same
 
 const styles = StyleSheet.create({
   container: {
