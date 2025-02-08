@@ -8,6 +8,7 @@ export default function BookmarksScreen({ navigation }) {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
   const [allJobs, setAllJobs] = useState([]); // Add state for all jobs
   const isFocused = useIsFocused();
+  
 
   // Load all jobs and bookmarks
   useEffect(() => {

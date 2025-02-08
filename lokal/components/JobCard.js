@@ -35,7 +35,7 @@ export default function JobCard({ job, index }) {
  useEffect(() => {
    const check = () => setBookmarked(isJobBookmarked(job.id));
    check();
- }, [job.id]);
+ }, [job.id,bookmarked]);
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("JobDetails", { job })}
@@ -66,7 +66,7 @@ export default function JobCard({ job, index }) {
             </View>
             <View style={styles.row}>
               <Ionicons name="location-outline" size={20} color="gray" />
-              <Text style={styles.location}>{job.location}</Text>
+              <Text style={styles.location}>{job.job_location_slug}</Text>
             </View>
 
             <View style={styles.contain}>
