@@ -1,12 +1,12 @@
-import React ,{useEffect} from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import JobsScreen from "../screens/JobsScreen";
 import JobDetailsScreen from "../screens/JobDetailsScreen";
 import BookmarksScreen from "../screens/BookmarksScreen";
-import { Ionicons } from "@expo/vector-icons"; // For icons
-import { setupDatabase } from "../utils/storage";
+import { Ionicons } from "@expo/vector-icons";
+import { BookmarkProvider } from "../context/BookmarkContext"; // Import the context provider
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,32 +27,34 @@ function JobsStack() {
 
 // Main App Navigation
 export default function App() {
-
-
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-            if (route.name === "Jobs") {
-              iconName = "briefcase-outline";
-            } else if (route.name === "Bookmarks") {
-              iconName = "bookmark-outline";
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: "#007AFF",
-          tabBarInactiveTintColor: "gray",
-        })}
-      >
-        <Tab.Screen
-          name="Jobs"
-          component={JobsStack}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen name="Bookmarks" component={BookmarksScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <BookmarkProvider>
+      {" "}
+      {/* Wrap the app with BookmarkProvider */}
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, size }) => {
+              let iconName;
+              if (route.name === "Jobs") {
+                iconName = "briefcase-outline";
+              } else if (route.name === "Bookmarks") {
+                iconName = "bookmark-outline";
+              }
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: "#007AFF",
+            tabBarInactiveTintColor: "gray",
+          })}
+        >
+          <Tab.Screen
+            name="Jobs"
+            component={JobsStack}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen name="Bookmarks" component={BookmarksScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </BookmarkProvider>
   );
 }

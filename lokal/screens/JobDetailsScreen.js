@@ -69,9 +69,9 @@ export default function JobDetailsScreen({ route }) {
 
       {/* Job Description */}
       <View style = {styles.descriptionBox}>
-        <Text style={styles.subTitle}>📝 Description</Text>
+        <Text style={styles.subTitle}>📝 Other details given by company</Text>
         <Text style={styles.detail}>
-          {job.description || "No description available"}
+          {job.other_details || "No description available"}
         </Text>
       </View>
 
@@ -170,8 +170,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   detail: {
-    fontSize: 16,
+    fontSize: 19,
     marginBottom: 10,
+    fontWeight:400,
+
   },
   additionalDetailsBox: {
     backgroundColor: "#f98",

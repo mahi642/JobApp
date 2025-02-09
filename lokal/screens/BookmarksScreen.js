@@ -1,40 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { getBookmarkedJobs } from "../utils/storage";
-import JobCard from "../components/JobCard"; // Ensure JobCard handles full job objects
+import React, { useContext } from "react";
+import { View, Text, Image, StyleSheet,FlatList } from "react-native";
+import { BookmarkContext } from "../context/BookmarkContext";
+import JobCard from "../components/JobCard";
 
 export default function BookmarksScreen({ navigation }) {
-  const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
-  const isFocused = useIsFocused();
-  const [flag,setFlag] = useState(false);
-  
-
-
-  // Load bookmarked jobs
-  useEffect(() => {
-    if (isFocused) {
-      const jobs = getBookmarkedJobs(); // Get full job objects
-      setBookmarkedJobs(jobs);
-      console.log("Loaded bookmarked jobs:", jobs);
-    }
-  }, [isFocused]);
+  const { bookmarkedJobs } = useContext(BookmarkContext);
+  const isEmpty = bookmarkedJobs.length === 0;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isEmpty && styles.whiteBackground]}>
       <Text style={styles.title}>Bookmarked Jobs</Text>
-      {bookmarkedJobs.length === 0 ? (
-        <Text>No bookmarks yet.</Text>
+
+      {isEmpty ? (
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../assets/not_availble.gif")}
+            style={styles.gif}
+          />
+          <Text>No bookamrks available</Text>
+        </View>
       ) : (
         <FlatList
           data={bookmarkedJobs}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <JobCard
-              job={item}
-              index={bookmarkedJobs.indexOf(item)}
-              navigation={navigation}
-            />
+          renderItem={({ item, index }) => (
+            <JobCard job={item} index={index} navigation={navigation} />
           )}
         />
       )}
@@ -42,19 +32,31 @@ export default function BookmarksScreen({ navigation }) {
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
+    backgroundColor: "#f5f5f5", // Default background color
+  },
+  whiteBackground: {
+    backgroundColor: "#ffffff", // White background when no bookmarks
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "center",
   },
-  job: {
-    fontSize: 16,
-    paddingVertical: 5,
+  imageContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  gif: {
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
+    alignSelf: "center",
   },
 });
+

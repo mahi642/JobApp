@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  saveJobToBookmarks,
-  removeJobFromBookmarks,
-  isJobBookmarked,
-} from "../utils/storage";
+import { BookmarkContext } from "../context/BookmarkContext";
 
 const colors = [
   "#E3F2FD",
@@ -20,22 +16,15 @@ const colors = [
 export default function JobCard({ job, index }) {
   const navigation = useNavigation();
   const backgroundColor = colors[index % colors.length];
-  const [bookmarked, setBookmarked] = useState(false);
+  const { bookmarkedJobs, addBookmark, removeBookmark } =
+    useContext(BookmarkContext);
 
- const toggleBookmark = () => {
-   if (bookmarked) {
-     removeJobFromBookmarks(job.id);
-   } else {
-     saveJobToBookmarks(job); // Store only the ID
-   }
-   setBookmarked(!bookmarked);
- };
+  const isBookmarked = bookmarkedJobs.some((bJob) => bJob.id === job.id);
 
- // Update the useEffect to sync with storage
- useEffect(() => {
-   const check = () => setBookmarked(isJobBookmarked(job.id));
-   check();
- }, [job.id,bookmarked]);
+  const toggleBookmark = () => {
+    isBookmarked ? removeBookmark(job.id) : addBookmark(job);
+  };
+
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("JobDetails", { job })}
@@ -54,31 +43,34 @@ export default function JobCard({ job, index }) {
               >
                 <Ionicons
                   style={styles.icon}
-                  name={bookmarked ? "bookmark" : "bookmark-outline"}
+                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
                   size={35}
-                  color={bookmarked ? "red" : "#007AFF"}
+                  color={isBookmarked ? "red" : "#007AFF"}
                 />
               </TouchableOpacity>
             </View>
+
             <View style={styles.row}>
               <Ionicons name="briefcase-outline" size={20} color="#333" />
               <Text style={styles.title}>{job.title}</Text>
             </View>
+
             <View style={styles.row}>
               <Ionicons name="location-outline" size={20} color="gray" />
               <Text style={styles.location}>{job.job_location_slug}</Text>
             </View>
 
+            {/* Salary and WhatsApp Number */}
             <View style={styles.contain}>
               <View style={styles.row1}>
                 <Ionicons
                   name="cash-outline"
                   size={25}
                   color="#28A745"
-                  style={styles.whatsappIcon}
+                  style={styles.iconSpacing}
                 />
                 <Text style={styles.salary}>
-                  {job.salary_max ? ` ${job.salary_max}` : " Not specified"}
+                  {job.salary_max ? `${job.salary_max}` : "Not specified"}
                 </Text>
               </View>
 
@@ -87,15 +79,14 @@ export default function JobCard({ job, index }) {
                   name="logo-whatsapp"
                   size={25}
                   color="#25D366"
-                  style={styles.whatsappIcon}
+                  style={styles.iconSpacing}
                 />
                 <Text style={styles.whatsappNo}>
-                  {job.whatsapp_no ? `${job.whatsapp_no}` : " N/A"}
+                  {job.whatsapp_no ? `${job.whatsapp_no}` : "N/A"}
                 </Text>
               </View>
             </View>
           </View>
-          {/* ... */}
         </View>
       </View>
     </TouchableOpacity>
@@ -105,6 +96,9 @@ export default function JobCard({ job, index }) {
 const styles = StyleSheet.create({
   top: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom:10,
   },
   card: {
     flexDirection: "row",
@@ -122,7 +116,7 @@ const styles = StyleSheet.create({
   },
   contain: {
     flexDirection: "row",
-    marginTop:10
+    marginTop: 10,
   },
   detailsContainer: {
     flex: 9,
@@ -136,28 +130,31 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 16,
     flex: 9,
   },
   row1: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
     flex: 9,
-    backgroundColor:"white",
-    borderRadius:8,
-    marginRight:8
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 6,
+    marginRight: 10,
+    elevation: 2, // Small shadow effect
   },
   companyName: {
     fontSize: 19,
     fontWeight: "bold",
     color: "#007AFF",
     marginLeft: 8,
+   
   },
   title: {
     fontSize: 15,
     fontWeight: "bold",
     marginLeft: 8,
+    marginBottom:0
   },
   location: {
     fontSize: 14,
@@ -165,26 +162,24 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   salary: {
-    fontSize: 19,
+    fontSize: 16,
     fontWeight: "600",
     color: "black",
     marginLeft: 8,
   },
   whatsappNo: {
-    fontSize: 19,
-    color: "black",
+    fontSize: 16,
     fontWeight: "600",
-    marginLeft: 10,
-    backgroundColor: "white",
-    padding: 9,
+    color: "black",
+    marginLeft: 8,
   },
   icon: {
     backgroundColor: "white",
     borderRadius: 50,
     padding: 5,
   },
-  whatsappIcon: {
-    backgroundColor: "white",
-    marginLeft:14,
+  iconSpacing: {
+    marginLeft: 10,
+    marginRight:10,
   },
 });

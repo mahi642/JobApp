@@ -55,7 +55,7 @@ export default function JobsScreen() {
         <ActivityIndicator size="large" color="#007AFF" />
       ) : (
         <FlatList
-          data={jobData}
+          data={jobData.filter((job) => job.title && job.company_name)}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => <JobCard job={item} index={index} />}
           onEndReached={loadMoreJobs} // Trigger when reaching the bottom
