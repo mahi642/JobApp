@@ -26,7 +26,7 @@ export default function JobCard({ job, index }) {
    if (bookmarked) {
      removeJobFromBookmarks(job.id);
    } else {
-     saveJobToBookmarks(job.id); // Store only the ID
+     saveJobToBookmarks(job); // Store only the ID
    }
    setBookmarked(!bookmarked);
  };

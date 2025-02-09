@@ -2,47 +2,37 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { getBookmarkedJobs } from "../utils/storage";
-import JobCard from "../components/JobCard"; // Make sure to import JobCard
+import JobCard from "../components/JobCard"; // Ensure JobCard handles full job objects
 
 export default function BookmarksScreen({ navigation }) {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
-  const [allJobs, setAllJobs] = useState([]); // Add state for all jobs
   const isFocused = useIsFocused();
+  const [flag,setFlag] = useState(false);
   
 
-  // Load all jobs and bookmarks
+
+  // Load bookmarked jobs
   useEffect(() => {
     if (isFocused) {
-      // You'll need to implement this function to get all jobs from your API/state
-      const loadJobs = async () => {
-        const response = await fetch(
-          "https://testapi.getlokalapp.com/common/jobs"
-        );
-        const data = await response.json();
-        setAllJobs(data.results);
-      };
-
-      loadJobs();
-      setBookmarkedJobs(getBookmarkedJobs());
+      const jobs = getBookmarkedJobs(); // Get full job objects
+      setBookmarkedJobs(jobs);
+      console.log("Loaded bookmarked jobs:", jobs);
     }
   }, [isFocused]);
-
-  // Filter jobs that are bookmarked
-  const filteredJobs = allJobs.filter((job) => bookmarkedJobs.includes(job.id));
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bookmarked Jobs</Text>
-      {filteredJobs.length === 0 ? (
+      {bookmarkedJobs.length === 0 ? (
         <Text>No bookmarks yet.</Text>
       ) : (
         <FlatList
-          data={filteredJobs}
-          keyExtractor={(item) => item.id.toString()}
+          data={bookmarkedJobs}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <JobCard
               job={item}
-              index={filteredJobs.indexOf(item)}
+              index={bookmarkedJobs.indexOf(item)}
               navigation={navigation}
             />
           )}
@@ -52,8 +42,7 @@ export default function BookmarksScreen({ navigation }) {
   );
 }
 
-// Keep styles the same
-
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
