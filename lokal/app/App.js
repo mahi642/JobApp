@@ -30,7 +30,6 @@ export default function App() {
   return (
     <BookmarkProvider>
       {" "}
-      {/* Wrap the app with BookmarkProvider */}
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({

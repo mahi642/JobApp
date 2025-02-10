@@ -158,8 +158,11 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 14,
-    color: "gray",
+    color: "black",
+    fontWeight:400,
     marginLeft: 8,
+    fontWeight:"bold"
+    
   },
   salary: {
     fontSize: 16,

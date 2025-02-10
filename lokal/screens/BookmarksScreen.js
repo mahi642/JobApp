@@ -17,7 +17,7 @@ export default function BookmarksScreen({ navigation }) {
             source={require("../assets/not_availble.gif")}
             style={styles.gif}
           />
-          <Text>No bookamrks available</Text>
+          <Text style = {styles.text1} >No bookmarks available</Text>
         </View>
       ) : (
         <FlatList
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#f5f5f5", // Default background color
+    backgroundColor: "#f5f5f5", 
   },
   whiteBackground: {
     backgroundColor: "#ffffff", // White background when no bookmarks
@@ -58,5 +58,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     alignSelf: "center",
   },
+  text1:{
+    fontSize:20,
+    fontWeight:400,
+
+  }
 });
 
